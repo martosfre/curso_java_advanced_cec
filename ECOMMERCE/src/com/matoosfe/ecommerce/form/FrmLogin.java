@@ -7,8 +7,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JPasswordField;
@@ -16,6 +18,10 @@ import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.border.TitledBorder;
+
+import com.matoosfe.ecommerce.modelo.Usuario;
+import com.matoosfe.ecommerce.negocio.UsuarioTrs;
+
 import javax.swing.UIManager;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -34,9 +40,9 @@ public class FrmLogin extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					//Setear el look and feel
+					// Setear el look and feel
 					UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-					//Crear y mostrar el formulario
+					// Crear y mostrar el formulario
 					FrmLogin frame = new FrmLogin();
 					frame.setVisible(true);
 					// Ubicar en el centro
@@ -117,16 +123,36 @@ public class FrmLogin extends JFrame {
 		contentPane.add(panel, BorderLayout.SOUTH);
 
 		JButton btnIngLog = new JButton("Ingresar");
-		btnIngLog.setIcon(new ImageIcon(FrmLogin.class.getResource("/com/matoosfe/ecommerce/resources/iconoSecurity48x48.png")));
+		btnIngLog.setIcon(
+				new ImageIcon(FrmLogin.class.getResource("/com/matoosfe/ecommerce/resources/iconoSecurity48x48.png")));
 		btnIngLog.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Cerrar la pantalla del login
-				FrmLogin.this.dispose();
-				// Llamar a la otra clase
-				FrmPrincipal frmPrincipal = new FrmPrincipal();
-				frmPrincipal.setVisible(true);
-				//Maximizar la pantalla
-				frmPrincipal.setExtendedState(MAXIMIZED_BOTH);
+				try {
+					// 1.Verificar los campos obligatorios
+					if (!txtNomUsu.getText().equals("") && !ptxtClaUsu.getText().equals("")) {
+						// 2.Recuperar esos campos y llamar al controlador
+						UsuarioTrs admUsu = new UsuarioTrs();
+						Usuario usuario = admUsu.validarUsuario(txtNomUsu.getText(), ptxtClaUsu.getText());
+						// 3. Verificar respuesta
+						if (usuario != null) {
+							// Cerrar la pantalla del login
+							FrmLogin.this.dispose();
+							// Llamar a la otra clase
+							FrmPrincipal frmPrincipal = new FrmPrincipal();
+							frmPrincipal.setVisible(true);
+							// Maximizar la pantalla
+							frmPrincipal.setExtendedState(MAXIMIZED_BOTH);
+						}else {
+							JOptionPane.showMessageDialog(null, "Usuario no encontrado", "Errores", JOptionPane.ERROR_MESSAGE);
+						}
+					} else {
+						JOptionPane.showMessageDialog(null, "Error credenciales", "Errores", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Error Ingreso:" + e1.getMessage(), "Errores",
+							JOptionPane.ERROR_MESSAGE);
+				}
+
 			}
 		});
 		panel.add(btnIngLog);

@@ -72,11 +72,12 @@ public class TipoProductoTrs implements ICrudC {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
 	@Override
 	public List<?> consultarTodos() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 }
