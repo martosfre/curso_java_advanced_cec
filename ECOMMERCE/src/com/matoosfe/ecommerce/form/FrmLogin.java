@@ -128,7 +128,7 @@ public class FrmLogin extends JFrame {
 		btnIngLog.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					// 1.Verificar los campos obligatorios
+					// 1.Verificar los campos obligatorios según la bdd
 					if (!txtNomUsu.getText().equals("") && !ptxtClaUsu.getText().equals("")) {
 						// 2.Recuperar esos campos y llamar al controlador
 						UsuarioTrs admUsu = new UsuarioTrs();
