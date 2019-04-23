@@ -63,14 +63,49 @@ public class TipoProductoTrs implements ICrudC {
 
 	@Override
 	public String actualizar(Object registro) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		String mensaje = null;
+
+		Connection con = ConexionBdd.conectarBdd();
+		String sqlUpdUsu = "UPDATE `ecommerce`.`tipo_producto`\r\n" + 
+				"SET\r\n" + 
+				"`nombre_tip_pro` = ?,\r\n" + 
+				"`descripcion_tip_pro` = ?\r\n" + 
+				"WHERE `id_tip_pro` = ?;";
+		PreparedStatement ptConUsu = con.prepareStatement(sqlUpdUsu);
+		
+		TipoProducto tipPro = (TipoProducto) registro;
+		ptConUsu.setString(1, tipPro.getNombreTipPro());
+		ptConUsu.setString(2, tipPro.getDescripcionTipPro());
+		ptConUsu.setInt(3, tipPro.getIdTipPro());
+		
+		int numFilAfe = ptConUsu.executeUpdate();
+
+		if(numFilAfe > 0) {
+			mensaje = "Registro actualizado correctamente";
+		}
+
+		return mensaje;
 	}
 
 	@Override
 	public String eliminar(Object registro) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		String mensaje = null;
+
+		Connection con = ConexionBdd.conectarBdd();
+		String sqlUpdUsu = "DELETE FROM `ecommerce`.`tipo_producto`\r\n" + 
+				"WHERE id_tip_pro = ?;";
+		PreparedStatement ptConUsu = con.prepareStatement(sqlUpdUsu);
+		
+		TipoProducto tipPro = (TipoProducto) registro;
+		ptConUsu.setInt(1, tipPro.getIdTipPro());
+		
+		int numFilAfe = ptConUsu.executeUpdate();
+
+		if(numFilAfe > 0) {
+			mensaje = "Registro eliminado correctamente";
+		}
+
+		return mensaje;
 	}
 	
 
@@ -80,4 +115,26 @@ public class TipoProductoTrs implements ICrudC {
 		return null;
 	}
 	
+	
+	public static void main(String[] args) {
+		try {
+			TipoProducto registro = new TipoProducto();
+			registro.setIdTipPro(6);
+			registro.setNombreTipPro("Prueba33");
+			registro.setDescripcionTipPro("PruebaDes33");
+			
+			TipoProductoTrs tipProTrs = new TipoProductoTrs();
+			tipProTrs.actualizar(registro);
+			
+			
+			TipoProducto registroEli = new TipoProducto();
+			registroEli.setIdTipPro(5);
+			tipProTrs.eliminar(registroEli);
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
