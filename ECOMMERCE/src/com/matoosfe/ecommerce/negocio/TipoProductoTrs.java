@@ -2,13 +2,10 @@ package com.matoosfe.ecommerce.negocio;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.List;
 
 import com.matoosfe.ecommerce.modelo.ConexionBdd;
 import com.matoosfe.ecommerce.modelo.TipoProducto;
-import com.matoosfe.ecommerce.modelo.Usuario;
 
 /**
  * Clase que administrar las operaciones relacionadas con tipo de producto
@@ -35,7 +32,7 @@ public class TipoProductoTrs implements ICrudC {
 				"(0, ?, ?);";
 
 		// 3.Elegir el tipo de Objeto JDBC a utilizar
-		PreparedStatement stConUsu = con.prepareStatement(sqlInsUsu);
+		PreparedStatement ptInsTipPro = con.prepareStatement(sqlInsUsu);
 
 		/*
 		 * 4.Proceder a ejecutar la sentencia SQL a) execute -> DDL -> boolean b)
@@ -44,11 +41,11 @@ public class TipoProductoTrs implements ICrudC {
 		 */
 		//4.1 Setear parámetros
 		TipoProducto tipPro = (TipoProducto) registro;
-		stConUsu.setString(1, tipPro.getNombreTipPro());
-		stConUsu.setString(2, tipPro.getDescripcionTipPro());
+		ptInsTipPro.setString(1, tipPro.getNombreTipPro());
+		ptInsTipPro.setString(2, tipPro.getDescripcionTipPro());
 		
 		//4.2 Ejecutar sentencia
-		int numFilAfe = stConUsu.executeUpdate();
+		int numFilAfe = ptInsTipPro.executeUpdate();
 
 		/*
 		 * 5.Procesar la información, tabla se convierte en un puntero a) Varios
@@ -71,14 +68,14 @@ public class TipoProductoTrs implements ICrudC {
 				"`nombre_tip_pro` = ?,\r\n" + 
 				"`descripcion_tip_pro` = ?\r\n" + 
 				"WHERE `id_tip_pro` = ?;";
-		PreparedStatement ptConUsu = con.prepareStatement(sqlUpdUsu);
+		PreparedStatement ptUpdTipPro = con.prepareStatement(sqlUpdUsu);
 		
 		TipoProducto tipPro = (TipoProducto) registro;
-		ptConUsu.setString(1, tipPro.getNombreTipPro());
-		ptConUsu.setString(2, tipPro.getDescripcionTipPro());
-		ptConUsu.setInt(3, tipPro.getIdTipPro());
+		ptUpdTipPro.setString(1, tipPro.getNombreTipPro());
+		ptUpdTipPro.setString(2, tipPro.getDescripcionTipPro());
+		ptUpdTipPro.setInt(3, tipPro.getIdTipPro());
 		
-		int numFilAfe = ptConUsu.executeUpdate();
+		int numFilAfe = ptUpdTipPro.executeUpdate();
 
 		if(numFilAfe > 0) {
 			mensaje = "Registro actualizado correctamente";
@@ -94,12 +91,12 @@ public class TipoProductoTrs implements ICrudC {
 		Connection con = ConexionBdd.conectarBdd();
 		String sqlUpdUsu = "DELETE FROM `ecommerce`.`tipo_producto`\r\n" + 
 				"WHERE id_tip_pro = ?;";
-		PreparedStatement ptConUsu = con.prepareStatement(sqlUpdUsu);
+		PreparedStatement ptDelTipPro = con.prepareStatement(sqlUpdUsu);
 		
 		TipoProducto tipPro = (TipoProducto) registro;
-		ptConUsu.setInt(1, tipPro.getIdTipPro());
+		ptDelTipPro.setInt(1, tipPro.getIdTipPro());
 		
-		int numFilAfe = ptConUsu.executeUpdate();
+		int numFilAfe = ptDelTipPro.executeUpdate();
 
 		if(numFilAfe > 0) {
 			mensaje = "Registro eliminado correctamente";
