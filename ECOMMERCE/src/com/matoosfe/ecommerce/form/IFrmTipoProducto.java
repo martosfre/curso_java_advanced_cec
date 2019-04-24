@@ -1,37 +1,43 @@
 package com.matoosfe.ecommerce.form;
 
-import javax.swing.JInternalFrame;
-import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
-import javax.swing.JPanel;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.JTextField;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import com.matoosfe.ecommerce.form.util.TableModelTipoProducto;
 import com.matoosfe.ecommerce.modelo.TipoProducto;
 import com.matoosfe.ecommerce.negocio.TipoProductoTrs;
-
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class IFrmTipoProducto extends JInternalFrame {
 	private JTextField txtNomTipPro;
 	private JTextArea txaDesTipPro;
+	private JTable tabTipPro;
+	private JTextField textField;
+	private TableModelTipoProducto myModeloTipPro;
 
 	/**
 	 * Create the frame.
 	 */
 	public IFrmTipoProducto() {
+		inicializar();
 		setClosable(true);
 		setMaximizable(true);
 		setIconifiable(true);
@@ -141,7 +147,41 @@ public class IFrmTipoProducto extends JInternalFrame {
 
 		JPanel tabLisTipPro = new JPanel();
 		tabbedPane.addTab("Listar", null, tabLisTipPro, null);
+		tabLisTipPro.setLayout(new BorderLayout(0, 0));
+		
+		JPanel pnlBusTipPro = new JPanel();
+		tabLisTipPro.add(pnlBusTipPro, BorderLayout.NORTH);
+		
+		JLabel lblBusPorTipPro = new JLabel("Nombre/Descripci\u00F3n:");
+		pnlBusTipPro.add(lblBusPorTipPro);
+		
+		textField = new JTextField();
+		pnlBusTipPro.add(textField);
+		textField.setColumns(10);
+		
+		tabTipPro = new JTable();
+		tabTipPro.setModel(myModeloTipPro);
+		JScrollPane spTipPro = new JScrollPane(tabTipPro);
+		tabLisTipPro.add(spTipPro, BorderLayout.CENTER);
 
+	}
+
+	private void inicializar() {
+		try {
+			List<String> columnas = new ArrayList<>();
+			columnas.add("Id");
+			columnas.add("Nombre");
+			columnas.add("Descripción");
+			
+			List<TipoProducto> filas = new ArrayList<TipoProducto>();
+			TipoProductoTrs admTipPro = new TipoProductoTrs();
+			filas = admTipPro.consultarTodos();
+			
+			myModeloTipPro = new TableModelTipoProducto(columnas, filas);
+		} catch (Exception e) {
+			
+		}
+		
 	}
 
 }
