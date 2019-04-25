@@ -37,6 +37,7 @@ public class IFrmTipoProducto extends JInternalFrame {
 	private JTextField textField;
 	private TableModelTipoProducto myModeloTipPro;
 	private TipoProducto tipProSel;
+	private JTabbedPane tabbedPane;
 
 	/**
 	 * Create the frame.
@@ -76,14 +77,24 @@ public class IFrmTipoProducto extends JInternalFrame {
 						TipoProducto tipProducto = new TipoProducto();
 						tipProducto.setNombreTipPro(txtNomTipPro.getText());
 						tipProducto.setDescripcionTipPro(txaDesTipPro.getText());
-
-						// 3. Llamar al controlador
 						TipoProductoTrs admTipPro = new TipoProductoTrs();
-						String mensaje = admTipPro.guardar(tipProducto);
+						String mensaje = null;
+						if (tipProSel == null) {// Guardar
+							// 3. Llamar al controlador
+							mensaje = admTipPro.guardar(tipProducto);
+						}else {
+							// 2.1 Setear el id para actualizar
+							tipProducto.setIdTipPro(tipProSel.getIdTipPro());
+							mensaje = admTipPro.actualizar(tipProducto);
+						}
 						JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
 						// 4. Limpiar el formulario
 						txtNomTipPro.setText("");
 						txaDesTipPro.setText("");
+						//5. Encerar la selección y actualizar la tabla
+						tipProSel = null; // Encero la selección
+						inicializar(); // Actualizan el modelo
+						tabTipPro.setModel(myModeloTipPro);// Actualizan el componente gráfico
 					}
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, "Error al guardar", "Errores", JOptionPane.ERROR_MESSAGE);
@@ -120,16 +131,25 @@ public class IFrmTipoProducto extends JInternalFrame {
 				}
 			}
 		});
+
+		JButton btnEdiTipPro = new JButton("Editar");
+		btnEdiTipPro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (tipProSel != null) {// Verificar que este seleccionado
+					tabbedPane.setSelectedIndex(0);// Cambiar de tab
+					txtNomTipPro.setText(tipProSel.getNombreTipPro());
+					txaDesTipPro.setText(tipProSel.getDescripcionTipPro());
+				}
+			}
+		});
+		btnEdiTipPro.setIcon(new ImageIcon(
+				IFrmTipoProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoEditar32x32.png")));
+		toolBar.add(btnEdiTipPro);
 		btnEliTipPro.setIcon(new ImageIcon(
 				IFrmTipoProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoBorrar32x32.png")));
 		toolBar.add(btnEliTipPro);
 
-		JButton btnConTipPro = new JButton("Consultar");
-		btnConTipPro.setIcon(new ImageIcon(
-				IFrmTipoProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoBuscar32x32.png")));
-		toolBar.add(btnConTipPro);
-
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
 		JPanel tabIngTipPro = new JPanel();
@@ -185,6 +205,11 @@ public class IFrmTipoProducto extends JInternalFrame {
 		textField = new JTextField();
 		pnlBusTipPro.add(textField);
 		textField.setColumns(10);
+
+		JButton btnConTipPro = new JButton("Buscar");
+		btnConTipPro.setIcon(new ImageIcon(
+				IFrmTipoProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoBuscar32x32.png")));
+		pnlBusTipPro.add(btnConTipPro);
 
 		tabTipPro = new JTable();
 		tabTipPro.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
