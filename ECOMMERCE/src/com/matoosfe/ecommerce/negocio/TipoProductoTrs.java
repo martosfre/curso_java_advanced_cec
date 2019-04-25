@@ -148,7 +148,6 @@ public class TipoProductoTrs implements ICrudC {
 		PreparedStatement stConTipPro = con.prepareStatement(sqlConTipPro);
 		stConTipPro.setString(1, "%" + text + "%");
 		stConTipPro.setString(2, "%" + text + "%");
-		
 		ResultSet rs = stConTipPro.executeQuery();
 
 		while (rs.next()) {
