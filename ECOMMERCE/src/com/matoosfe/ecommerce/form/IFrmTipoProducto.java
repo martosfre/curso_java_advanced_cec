@@ -38,6 +38,8 @@ public class IFrmTipoProducto extends JInternalFrame {
 	private TableModelTipoProducto myModeloTipPro;
 	private TipoProducto tipProSel;
 	private JTabbedPane tabbedPane;
+	private JButton btnEdiTipPro;
+	private JButton btnEliTipPro;
 
 	/**
 	 * Create the frame.
@@ -95,6 +97,8 @@ public class IFrmTipoProducto extends JInternalFrame {
 						tipProSel = null; // Encero la selección
 						inicializar(); // Actualizan el modelo
 						tabTipPro.setModel(myModeloTipPro);// Actualizan el componente gráfico
+						btnEdiTipPro.setEnabled(false);
+						btnEliTipPro.setEnabled(false);
 					}
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, "Error al guardar", "Errores", JOptionPane.ERROR_MESSAGE);
@@ -105,7 +109,8 @@ public class IFrmTipoProducto extends JInternalFrame {
 				IFrmTipoProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoGuardar32x32.png")));
 		toolBar.add(btnGuaTipPro);
 
-		JButton btnEliTipPro = new JButton("Eliminar");
+		btnEliTipPro = new JButton("Eliminar");
+		btnEliTipPro.setEnabled(false);
 		btnEliTipPro.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -120,6 +125,8 @@ public class IFrmTipoProducto extends JInternalFrame {
 							tipProSel = null; // Encero la selección
 							inicializar(); // Actualizan el modelo
 							tabTipPro.setModel(myModeloTipPro);// Actualizan el componente gráfico
+							btnEdiTipPro.setEnabled(false);
+							btnEliTipPro.setEnabled(false);
 						}
 
 					} else {
@@ -132,13 +139,17 @@ public class IFrmTipoProducto extends JInternalFrame {
 			}
 		});
 
-		JButton btnEdiTipPro = new JButton("Editar");
+		btnEdiTipPro = new JButton("Editar");
+		btnEdiTipPro.setEnabled(false);
 		btnEdiTipPro.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (tipProSel != null) {// Verificar que este seleccionado
 					tabbedPane.setSelectedIndex(0);// Cambiar de tab
 					txtNomTipPro.setText(tipProSel.getNombreTipPro());
 					txaDesTipPro.setText(tipProSel.getDescripcionTipPro());
+				}else {
+					JOptionPane.showMessageDialog(null, "No se ha seleccionado ningún registro", "Errores",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -217,6 +228,7 @@ public class IFrmTipoProducto extends JInternalFrame {
 		JScrollPane spTipPro = new JScrollPane(tabTipPro);
 		tabLisTipPro.add(spTipPro, BorderLayout.CENTER);
 
+		//Implementar la selección de la tabla
 		tabTipPro.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -228,6 +240,8 @@ public class IFrmTipoProducto extends JInternalFrame {
 				if (indSel >= 0) {
 					TableModelTipoProducto modelo = (TableModelTipoProducto) tabTipPro.getModel();
 					tipProSel = modelo.obtenerFilaSeleccionada(indSel);
+					btnEdiTipPro.setEnabled(true);
+					btnEliTipPro.setEnabled(true);
 				}
 
 			}
