@@ -3,6 +3,7 @@ package com.matoosfe.ecommerce.form;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,10 +22,13 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.matoosfe.ecommerce.form.util.TableModelTipoProducto;
 import com.matoosfe.ecommerce.modelo.TipoProducto;
 import com.matoosfe.ecommerce.negocio.TipoProductoTrs;
+import javax.swing.ListSelectionModel;
 
 public class IFrmTipoProducto extends JInternalFrame {
 	private JTextField txtNomTipPro;
@@ -32,6 +36,7 @@ public class IFrmTipoProducto extends JInternalFrame {
 	private JTable tabTipPro;
 	private JTextField textField;
 	private TableModelTipoProducto myModeloTipPro;
+	private TipoProducto tipProSel;
 
 	/**
 	 * Create the frame.
@@ -65,26 +70,23 @@ public class IFrmTipoProducto extends JInternalFrame {
 				try {
 					// 1.Verificar que no tenga campos nulos en base a la definición de la bdd
 					if (txtNomTipPro.getText().equals("")) {
-						JOptionPane.showMessageDialog(null, "Nombre requerido", "Errores", 
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Nombre requerido", "Errores", JOptionPane.ERROR_MESSAGE);
 					} else {
-						//2. Recuperar los valores y armar el objeto
+						// 2. Recuperar los valores y armar el objeto
 						TipoProducto tipProducto = new TipoProducto();
 						tipProducto.setNombreTipPro(txtNomTipPro.getText());
 						tipProducto.setDescripcionTipPro(txaDesTipPro.getText());
-						
-						//3. Llamar al controlador
+
+						// 3. Llamar al controlador
 						TipoProductoTrs admTipPro = new TipoProductoTrs();
 						String mensaje = admTipPro.guardar(tipProducto);
-						JOptionPane.showMessageDialog(null, mensaje, "Errores", 
-								JOptionPane.INFORMATION_MESSAGE);
-						//4. Limpiar el formulario
+						JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
+						// 4. Limpiar el formulario
 						txtNomTipPro.setText("");
 						txaDesTipPro.setText("");
 					}
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(null, "Error al guardar", "Errores", 
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Error al guardar", "Errores", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -93,6 +95,31 @@ public class IFrmTipoProducto extends JInternalFrame {
 		toolBar.add(btnGuaTipPro);
 
 		JButton btnEliTipPro = new JButton("Eliminar");
+		btnEliTipPro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (tipProSel != null) { // Esta seleccionado el registro
+						int valCon = JOptionPane.showConfirmDialog(null, "¿Está seguro de eliminar el registro?",
+								"Confirmación", JOptionPane.YES_NO_OPTION);
+						if (valCon == 0) {
+							TipoProductoTrs admTipPro = new TipoProductoTrs();
+							String mensaje = admTipPro.eliminar(tipProSel);
+							JOptionPane.showMessageDialog(null, mensaje, "Información",
+									JOptionPane.INFORMATION_MESSAGE);
+							tipProSel = null; // Encero la selección
+							inicializar(); // Actualizan el modelo
+							tabTipPro.setModel(myModeloTipPro);// Actualizan el componente gráfico
+						}
+
+					} else {
+						JOptionPane.showMessageDialog(null, "No se ha seleccionado ningún registro", "Errores",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Error al eliminar", "Errores", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		btnEliTipPro.setIcon(new ImageIcon(
 				IFrmTipoProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoBorrar32x32.png")));
 		toolBar.add(btnEliTipPro);
@@ -148,21 +175,38 @@ public class IFrmTipoProducto extends JInternalFrame {
 		JPanel tabLisTipPro = new JPanel();
 		tabbedPane.addTab("Listar", null, tabLisTipPro, null);
 		tabLisTipPro.setLayout(new BorderLayout(0, 0));
-		
+
 		JPanel pnlBusTipPro = new JPanel();
 		tabLisTipPro.add(pnlBusTipPro, BorderLayout.NORTH);
-		
+
 		JLabel lblBusPorTipPro = new JLabel("Nombre/Descripci\u00F3n:");
 		pnlBusTipPro.add(lblBusPorTipPro);
-		
+
 		textField = new JTextField();
 		pnlBusTipPro.add(textField);
 		textField.setColumns(10);
-		
+
 		tabTipPro = new JTable();
+		tabTipPro.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tabTipPro.setModel(myModeloTipPro);
 		JScrollPane spTipPro = new JScrollPane(tabTipPro);
 		tabLisTipPro.add(spTipPro, BorderLayout.CENTER);
+
+		tabTipPro.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				// Recuperar el modelo de Seleccion
+				ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+				// Recuperar el indice del registro seleccionado
+				int indSel = lsm.getMaxSelectionIndex();
+				// Verificar que se haya seleccionado un valor
+				if (indSel >= 0) {
+					TableModelTipoProducto modelo = (TableModelTipoProducto) tabTipPro.getModel();
+					tipProSel = modelo.obtenerFilaSeleccionada(indSel);
+				}
+
+			}
+		});
 
 	}
 
@@ -172,16 +216,16 @@ public class IFrmTipoProducto extends JInternalFrame {
 			columnas.add("Id");
 			columnas.add("Nombre");
 			columnas.add("Descripción");
-			
+
 			List<TipoProducto> filas = new ArrayList<TipoProducto>();
 			TipoProductoTrs admTipPro = new TipoProductoTrs();
 			filas = admTipPro.consultarTodos();
-			
+
 			myModeloTipPro = new TableModelTipoProducto(columnas, filas);
 		} catch (Exception e) {
-			
+
 		}
-		
+
 	}
 
 }

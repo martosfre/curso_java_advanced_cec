@@ -87,4 +87,13 @@ public class TableModelTipoProducto implements TableModel{
 		
 	}
 
+	/**
+	 * Método para recuperar el registro seleccionado
+	 * @param indSel
+	 * @return
+	 */
+	public TipoProducto obtenerFilaSeleccionada(int indSel) {
+		return filas.get(indSel);
+	}
+
 }
