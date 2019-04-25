@@ -139,4 +139,26 @@ public class TipoProductoTrs implements ICrudC {
 			e.printStackTrace();
 		}
 	}
+
+	public List<TipoProducto> consultarPorNombreDescripcion(String text) throws Exception{
+		List<TipoProducto> listaTipoProductos = new ArrayList<>();
+		Connection con = ConexionBdd.conectarBdd();
+		String sqlConTipPro = "SELECT * FROM ecommerce.tipo_producto where nombre_tip_pro"
+				+ " LIKE ? or descripcion_tip_pro LIKE ?;";
+		PreparedStatement stConTipPro = con.prepareStatement(sqlConTipPro);
+		stConTipPro.setString(1, "%" + text + "%");
+		stConTipPro.setString(2, "%" + text + "%");
+		
+		ResultSet rs = stConTipPro.executeQuery(sqlConTipPro);
+
+		while (rs.next()) {
+			TipoProducto tipPro = new TipoProducto();
+			tipPro.setIdTipPro(rs.getInt(1));
+			tipPro.setNombreTipPro(rs.getString(2)); 
+			tipPro.setDescripcionTipPro(rs.getString(3));
+			listaTipoProductos.add(tipPro);
+		}
+
+		return listaTipoProductos;
+	}
 }

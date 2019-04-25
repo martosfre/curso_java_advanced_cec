@@ -34,7 +34,7 @@ public class IFrmTipoProducto extends JInternalFrame {
 	private JTextField txtNomTipPro;
 	private JTextArea txaDesTipPro;
 	private JTable tabTipPro;
-	private JTextField textField;
+	private JTextField txtValBus;
 	private TableModelTipoProducto myModeloTipPro;
 	private TipoProducto tipProSel;
 	private JTabbedPane tabbedPane;
@@ -213,11 +213,29 @@ public class IFrmTipoProducto extends JInternalFrame {
 		JLabel lblBusPorTipPro = new JLabel("Nombre/Descripci\u00F3n:");
 		pnlBusTipPro.add(lblBusPorTipPro);
 
-		textField = new JTextField();
-		pnlBusTipPro.add(textField);
-		textField.setColumns(10);
+		txtValBus = new JTextField();
+		pnlBusTipPro.add(txtValBus);
+		txtValBus.setColumns(10);
 
 		JButton btnConTipPro = new JButton("Buscar");
+		btnConTipPro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					TipoProductoTrs admTipPro = new TipoProductoTrs();
+					
+					List<String> columnas = new ArrayList<>();
+					columnas.add("Id");
+					columnas.add("Nombre");
+					columnas.add("Descripción");
+					List<TipoProducto> filas = admTipPro.consultarPorNombreDescripcion(txtValBus.getText());
+
+					myModeloTipPro = new TableModelTipoProducto(columnas, filas);
+					tabTipPro.setModel(myModeloTipPro);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnConTipPro.setIcon(new ImageIcon(
 				IFrmTipoProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoBuscar32x32.png")));
 		pnlBusTipPro.add(btnConTipPro);
