@@ -58,6 +58,15 @@ public class FrmPrincipal extends JFrame{
 		menInv.add(menIteTipPro);
 		
 		JMenuItem menItePro = new JMenuItem("Producto");
+		menItePro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Crear Pantalla 
+				IFrmProducto iFrmProducto = new IFrmProducto();
+				iFrmProducto.setVisible(true);
+				//Añadirle al Contenedor
+				desPanPri.add(iFrmProducto);
+			}
+		});
 		menInv.add(menItePro);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

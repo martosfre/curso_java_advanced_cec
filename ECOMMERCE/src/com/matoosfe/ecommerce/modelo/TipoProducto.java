@@ -86,8 +86,7 @@ public class TipoProducto {
 	 */
 	@Override
 	public String toString() {
-		return "TipoProducto [idTipPro=" + idTipPro + ", nombreTipPro=" + nombreTipPro + ", descripcionTipPro="
-				+ descripcionTipPro + "]";
+		return nombreTipPro;
 	}
 
 }

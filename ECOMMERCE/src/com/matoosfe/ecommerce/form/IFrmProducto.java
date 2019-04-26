@@ -7,12 +7,21 @@ import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+
+import com.matoosfe.ecommerce.form.util.ComboBoxModelTipoProducto;
+import com.matoosfe.ecommerce.form.util.TableModelTipoProducto;
+import com.matoosfe.ecommerce.modelo.TipoProducto;
+import com.matoosfe.ecommerce.negocio.TipoProductoTrs;
+
 import javax.swing.JButton;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JTextArea;
 import javax.swing.JFormattedTextField;
 import javax.swing.JComboBox;
@@ -21,11 +30,13 @@ import javax.swing.DefaultComboBoxModel;
 
 public class IFrmProducto extends JInternalFrame {
 	private JTextField txtNomPro;
+	private ComboBoxModelTipoProducto modeloComboTipPro;
 
 	/**
 	 * Create the frame.
 	 */
 	public IFrmProducto() {
+		inicializar();
 		setTitle("::.Administraci\u00F3n Producto.::");
 		setBounds(100, 100, 450, 300);
 		
@@ -59,7 +70,7 @@ public class IFrmProducto extends JInternalFrame {
 		gbl_pnlIngPro.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
 		gbl_pnlIngPro.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
 		gbl_pnlIngPro.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-		gbl_pnlIngPro.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_pnlIngPro.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		pnlIngPro.setLayout(gbl_pnlIngPro);
 		
 		JLabel lblTipPro = new JLabel("Tipo Producto:");
@@ -69,8 +80,8 @@ public class IFrmProducto extends JInternalFrame {
 		gbc_lblTipPro.gridy = 1;
 		pnlIngPro.add(lblTipPro, gbc_lblTipPro);
 		
-		JComboBox cmbTipPro = new JComboBox();
-		cmbTipPro.setModel(new DefaultComboBoxModel(new String[] {"Pichincha", "Guayas"}));
+		JComboBox<TipoProducto> cmbTipPro = new JComboBox<>();
+		cmbTipPro.setModel(modeloComboTipPro);
 		GridBagConstraints gbc_cmbTipPro = new GridBagConstraints();
 		gbc_cmbTipPro.insets = new Insets(0, 0, 5, 0);
 		gbc_cmbTipPro.fill = GridBagConstraints.HORIZONTAL;
@@ -126,6 +137,19 @@ public class IFrmProducto extends JInternalFrame {
 		JPanel pnlLisPro = new JPanel();
 		tabbedPane.addTab("Listar", null, pnlLisPro, null);
 
+	}
+
+	private void inicializar() {
+		try {
+			List<TipoProducto> filas = new ArrayList<TipoProducto>();
+			TipoProductoTrs admTipPro = new TipoProductoTrs();
+			filas = admTipPro.consultarTodos();
+
+			modeloComboTipPro = new ComboBoxModelTipoProducto(filas);
+		} catch (Exception e) {
+
+		}
+		
 	}
 
 }
