@@ -9,12 +9,14 @@ package com.matoosfe.ecommerce.modelo;
  */
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class Producto {
 	private int idPro;
 	private String nombrePro;
 	private String descripcionPro;
 	private BigDecimal precioPro;
+	private Date fechaCadPro;
 	// Se asocia con un atributo (Relación 1)
 	private TipoProducto tipoProducto;
 
@@ -33,6 +35,10 @@ public class Producto {
 		this.descripcionPro = descripcionPro;
 		this.precioPro = precioPro;
 		this.tipoProducto = tipoProducto;
+	}
+
+	public Producto() {
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -89,6 +95,20 @@ public class Producto {
 	 */
 	public void setPrecioPro(BigDecimal precioPro) {
 		this.precioPro = precioPro;
+	}
+
+	/**
+	 * @return the fechaCadPro
+	 */
+	public Date getFechaCadPro() {
+		return fechaCadPro;
+	}
+
+	/**
+	 * @param fechaCadPro the fechaCadPro to set
+	 */
+	public void setFechaCadPro(Date fechaCadPro) {
+		this.fechaCadPro = fechaCadPro;
 	}
 
 	/**
