@@ -14,11 +14,11 @@ import com.matoosfe.ecommerce.modelo.TipoProducto;
  * @author martosfre
  *
  */
-public class ComboBoxModelTipoProducto implements ComboBoxModel<TipoProducto>{
+public class ComboBoxModelTipoProducto implements ComboBoxModel<TipoProducto> {
 
 	private List<TipoProducto> tipoProductos;
 	private int indice;
-	
+
 	/**
 	 * @param tipoProductos
 	 */
@@ -40,26 +40,25 @@ public class ComboBoxModelTipoProducto implements ComboBoxModel<TipoProducto>{
 	@Override
 	public void addListDataListener(ListDataListener l) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeListDataListener(ListDataListener l) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setSelectedItem(Object anItem) {
-		if(tipoProductos.contains(anItem)) {
+		if (tipoProductos.contains(anItem)) {
 			indice = tipoProductos.indexOf(anItem);
 		}
 	}
-	
+
 	@Override
 	public Object getSelectedItem() {
 		return tipoProductos.get(indice);
 	}
-	
 
 }

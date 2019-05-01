@@ -3,10 +3,11 @@ package com.matoosfe.ecommerce.form;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,19 +20,24 @@ import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.matoosfe.ecommerce.form.util.ComboBoxModelTipoProducto;
+import com.matoosfe.ecommerce.form.util.TableModelProducto;
 import com.matoosfe.ecommerce.modelo.Producto;
 import com.matoosfe.ecommerce.modelo.TipoProducto;
 import com.matoosfe.ecommerce.negocio.ProductoTrs;
 import com.matoosfe.ecommerce.negocio.TipoProductoTrs;
 import com.toedter.calendar.JDateChooser;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 public class IFrmProducto extends JInternalFrame {
 	private JTextField txtNomPro;
@@ -41,6 +47,13 @@ public class IFrmProducto extends JInternalFrame {
 	private JDateChooser datChoFecCadPro;
 	private TipoProducto tipProSel; // Selección Combo
 	private Producto proSel; // Selección Tabla
+	private TableModelProducto myModeloPro;
+	private JTable tabPro;
+	private JTextField txtBusPorPro;
+	private JTabbedPane tabbedPane;
+	private JComboBox<TipoProducto> cmbTipPro;
+	private JButton btnEdiPro;
+	private JButton btnEliPro;
 
 	/**
 	 * Create the frame.
@@ -93,6 +106,18 @@ public class IFrmProducto extends JInternalFrame {
 					}
 
 					JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
+					// 4. Limpiar el formulario
+					txtNomPro.setText("");
+					txaDesPro.setText("");
+					fxtPrePro.setText("");
+					datChoFecCadPro.setDate(null);
+					// 5. Encerar la selección y actualizar la tabla
+					proSel = null; // Encero la selección
+					tipProSel = null;
+					inicializar(); // Actualizan el modelo
+					tabPro.setModel(myModeloPro);// Actualizan el componente gráfico
+					btnEdiPro.setEnabled(false);
+					btnEliPro.setEnabled(false);
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, "Error al guardar:" + e1.getMessage(), "Errores",
 							JOptionPane.ERROR_MESSAGE);
@@ -104,19 +129,65 @@ public class IFrmProducto extends JInternalFrame {
 				IFrmProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoGuardar32x32.png")));
 		toolBar.add(btnGuaPro);
 
-		JButton btnEdiPro = new JButton("Editar");
+		btnEdiPro = new JButton("Editar");
+		btnEdiPro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (proSel != null) {// Verificar que este seleccionado
+					tabbedPane.setSelectedIndex(0);// Cambiar de tab
+					txtNomPro.setText(proSel.getNombrePro());
+					txaDesPro.setText(proSel.getDescripcionPro());
+					fxtPrePro.setText(proSel.getPrecioPro().toString());
+					datChoFecCadPro.setDate(proSel.getFechaCadPro());
+					//Selección del Combo
+					modeloComboTipPro.setSelectedItem(proSel.getTipoProducto());
+					cmbTipPro.setSelectedItem(modeloComboTipPro.getSelectedItem());
+					
+				} else {
+					JOptionPane.showMessageDialog(null, "No se ha seleccionado ningún registro", "Errores",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		btnEdiPro.setIcon(new ImageIcon(
 				IFrmProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoEditar32x32.png")));
 		btnEdiPro.setEnabled(false);
 		toolBar.add(btnEdiPro);
 
-		JButton btnEliPro = new JButton("Eliminar");
+		btnEliPro = new JButton("Eliminar");
+		btnEliPro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (proSel != null) { // Esta seleccionado el registro
+						int valCon = JOptionPane.showConfirmDialog(null, "¿Está seguro de eliminar el registro?",
+								"Confirmación", JOptionPane.YES_NO_OPTION);
+						if (valCon == 0) {
+							ProductoTrs admPro = new ProductoTrs();
+							String mensaje = admPro.eliminar(proSel);
+							JOptionPane.showMessageDialog(null, mensaje, "Información",
+									JOptionPane.INFORMATION_MESSAGE);
+							proSel = null; // Encero la selección
+							tipProSel = null;
+							inicializar(); // Actualizan el modelo
+							tabPro.setModel(myModeloPro);// Actualizan el componente gráfico
+							btnEdiPro.setEnabled(false);
+							btnEliPro.setEnabled(false);
+						}
+
+					} else {
+						JOptionPane.showMessageDialog(null, "No se ha seleccionado ningún registro", "Errores",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Error al eliminar", "Errores", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		btnEliPro.setIcon(new ImageIcon(
 				IFrmProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoBorrar32x32.png")));
 		btnEliPro.setEnabled(false);
 		toolBar.add(btnEliPro);
 
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
 		JPanel pnlIngPro = new JPanel();
@@ -135,10 +206,11 @@ public class IFrmProducto extends JInternalFrame {
 		gbc_lblTipPro.gridy = 1;
 		pnlIngPro.add(lblTipPro, gbc_lblTipPro);
 
-		JComboBox<TipoProducto> cmbTipPro = new JComboBox<>();
+		cmbTipPro = new JComboBox<>();
 		cmbTipPro.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				tipProSel = (TipoProducto) modeloComboTipPro.getSelectedItem();
+				System.out.println(tipProSel);
 			}
 		});
 
@@ -212,6 +284,46 @@ public class IFrmProducto extends JInternalFrame {
 
 		JPanel pnlLisPro = new JPanel();
 		tabbedPane.addTab("Listar", null, pnlLisPro, null);
+		pnlLisPro.setLayout(new BorderLayout(0, 0));
+		
+		JPanel pnlBusPro = new JPanel();
+		pnlLisPro.add(pnlBusPro, BorderLayout.NORTH);
+		
+		JLabel lblBusPorPro = new JLabel("Nombre/Descripci\u00F3n:");
+		pnlBusPro.add(lblBusPorPro);
+		
+		txtBusPorPro = new JTextField();
+		pnlBusPro.add(txtBusPorPro);
+		txtBusPorPro.setColumns(10);
+		
+		JButton btnBusPorPro = new JButton("Buscar");
+		btnBusPorPro.setIcon(new ImageIcon(IFrmProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoBuscar32x32.png")));
+		pnlBusPro.add(btnBusPorPro);
+		
+		tabPro = new JTable();
+		tabPro.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tabPro.setModel(myModeloPro);
+		JScrollPane scrPanTabPro = new JScrollPane(tabPro);
+		pnlLisPro.add(scrPanTabPro, BorderLayout.CENTER);
+
+		//Implementar la selección de la tabla
+		tabPro.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				// Recuperar el modelo de Seleccion
+				ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+				// Recuperar el indice del registro seleccionado
+				int indSel = lsm.getMaxSelectionIndex();
+				// Verificar que se haya seleccionado un valor
+				if (indSel >= 0) {
+					TableModelProducto modelo = (TableModelProducto) tabPro.getModel();
+					proSel = modelo.obtenerFilaSeleccionada(indSel);
+					btnEdiPro.setEnabled(true);
+					btnEliPro.setEnabled(true);
+				}
+
+			}
+		});
 
 	}
 
@@ -221,8 +333,24 @@ public class IFrmProducto extends JInternalFrame {
 			TipoProductoTrs admTipPro = new TipoProductoTrs();
 			filas = admTipPro.consultarTodos();
 			modeloComboTipPro = new ComboBoxModelTipoProducto(filas);
-		} catch (Exception e) {
+			
+			//Inicializar la tabla
+			List<String> columnas = new ArrayList<>();
+			columnas.add("Id");
+			columnas.add("Nombre");
+			columnas.add("Descripción");
+			columnas.add("Precio");
+			columnas.add("Fecha Caducidad");
+			columnas.add("Tipo Producto");
 
+			List<Producto> filasTabla = new ArrayList<Producto>();
+			ProductoTrs admPro = new ProductoTrs();
+			filasTabla = admPro.consultarTodos();
+
+			myModeloPro = new TableModelProducto(columnas, filasTabla);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "No se pudo inicializar las estructuras de datos", "Errores",
+					JOptionPane.ERROR_MESSAGE);
 		}
 
 	}

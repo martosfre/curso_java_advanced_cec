@@ -79,6 +79,34 @@ public class TipoProducto {
 		this.productos = productos;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + idTipPro;
+		result = prime * result + ((nombreTipPro == null) ? 0 : nombreTipPro.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TipoProducto other = (TipoProducto) obj;
+		if (idTipPro != other.idTipPro)
+			return false;
+		if (nombreTipPro == null) {
+			if (other.nombreTipPro != null)
+				return false;
+		} else if (!nombreTipPro.equals(other.nombreTipPro))
+			return false;
+		return true;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

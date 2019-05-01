@@ -168,4 +168,31 @@ public class TipoProductoTrs implements ICrudC {
 
 		return listaTipoProductos;
 	}
+
+	public TipoProducto consultarPorId(int idTipPro) throws Exception {
+		TipoProducto tipPro = null;
+		try(Connection con = ConexionBdd.conectarBdd()) {
+			String sqlConTipPro = "SELECT * FROM ecommerce.tipo_producto where id_tip_pro = ?;";
+			try (PreparedStatement stConTipPro = con.prepareStatement(sqlConTipPro);){
+				stConTipPro.setInt(1,  idTipPro);
+				try {
+					ResultSet rs = stConTipPro.executeQuery();
+
+					if (rs.next()) {
+						tipPro = new TipoProducto();
+						tipPro.setIdTipPro(rs.getInt(1));
+						tipPro.setNombreTipPro(rs.getString(2));
+						tipPro.setDescripcionTipPro(rs.getString(3));
+					}
+				} catch (Exception e) {
+					throw new Exception("Error al cerrar el rs");
+				}
+			} catch (Exception e) {
+				throw new Exception("Error al cerrar el pt");
+			}
+		} catch (Exception e) {
+			throw new Exception("Error al cerrar la conexión");
+		}
+		return tipPro;
+	}
 }

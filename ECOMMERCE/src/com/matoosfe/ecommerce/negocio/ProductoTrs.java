@@ -1,6 +1,7 @@
 package com.matoosfe.ecommerce.negocio;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -62,24 +63,32 @@ public class ProductoTrs implements ICrudC {
 		String mensaje = null;
 
 		try (Connection con = ConexionBdd.conectarBdd()) {
-			String sqlUpdUsu = "UPDATE `ecommerce`.`tipo_producto`\r\n" + "SET\r\n" + "`nombre_tip_pro` = ?,\r\n"
-					+ "`descripcion_tip_pro` = ?\r\n" + "WHERE `id_tip_pro` = ?;";
-			try (PreparedStatement ptUpdTipPro = con.prepareStatement(sqlUpdUsu)){
-				TipoProducto tipPro = (TipoProducto) registro;
-				ptUpdTipPro.setString(1, tipPro.getNombreTipPro());
-				ptUpdTipPro.setString(2, tipPro.getDescripcionTipPro());
-				ptUpdTipPro.setInt(3, tipPro.getIdTipPro());
-
-				int numFilAfe = ptUpdTipPro.executeUpdate();
+			String sqlUpdPro = "UPDATE `ecommerce`.`producto`\r\n" + 
+					"SET\r\n" + 
+					"`nombre_pro` = ?,\r\n" + 
+					"`descripcion_pro` = ?,\r\n" + 
+					"`precio_pro` = ?,\r\n" + 
+					"`fecha_cad_pro` = ?,\r\n" + 
+					"`id_tip_pro` = ?\r\n" + 
+					"WHERE `id_pro` = ?;";
+			try (PreparedStatement ptUpdPro = con.prepareStatement(sqlUpdPro)){
+				Producto pro = (Producto) registro;
+				ptUpdPro.setString(1, pro.getNombrePro());
+				ptUpdPro.setString(2, pro.getDescripcionPro());
+				ptUpdPro.setBigDecimal(3, pro.getPrecioPro());
+				ptUpdPro.setDate(4, new java.sql.Date(pro.getFechaCadPro().getTime()));
+				ptUpdPro.setInt(5, pro.getTipoProducto().getIdTipPro());
+				ptUpdPro.setInt(6, pro.getIdPro());
+				int numFilAfe = ptUpdPro.executeUpdate();
 
 				if (numFilAfe > 0) {
 					mensaje = "Registro actualizado correctamente";
 				}
-			} catch (Exception e) {
-				throw new Exception("Error al cerrar el pt");
+			}catch (Exception e) {
+				throw new Exception("Error al cerrar el pt:" + e.getMessage());
 			}
 		} catch (Exception e) {
-			throw new Exception("Error al cerrar la conexión");
+			throw new Exception("Error al cerrar la conexión" + e.getMessage());
 		}
 
 		return mensaje;
@@ -90,39 +99,44 @@ public class ProductoTrs implements ICrudC {
 		String mensaje = null;
 
 		try(Connection con = ConexionBdd.conectarBdd()) {
-			String sqlUpdUsu = "DELETE FROM `ecommerce`.`tipo_producto`\r\n" + "WHERE id_tip_pro = ?;";
-			try (PreparedStatement ptDelTipPro = con.prepareStatement(sqlUpdUsu)){
-				TipoProducto tipPro = (TipoProducto) registro;
-				ptDelTipPro.setInt(1, tipPro.getIdTipPro());
+			String sqlDelPro = "DELETE FROM `ecommerce`.`producto`\r\n" + "WHERE id_pro = ?;";
+			try (PreparedStatement ptDelPro = con.prepareStatement(sqlDelPro)){
+				Producto pro = (Producto) registro;
+				ptDelPro.setInt(1, pro.getIdPro());
 
-				int numFilAfe = ptDelTipPro.executeUpdate();
+				int numFilAfe = ptDelPro.executeUpdate();
 
 				if (numFilAfe > 0) {
 					mensaje = "Registro eliminado correctamente";
 				}
 			} catch (Exception e) {
-				throw new Exception("Error al cerrar el pt");
+				throw new Exception("Error al cerrar el pt:" + e.getMessage());
 			}
 		} catch (Exception e) {
-			throw new Exception("Error al cerrar la conexión");
+			throw new Exception("Error al cerrar la conexión" + e.getMessage());
 		}
+
 
 		return mensaje;
 	}
 
 	@Override
-	public List<TipoProducto> consultarTodos() throws Exception {
-		List<TipoProducto> listaTipoProductos = new ArrayList<>();
+	public List<Producto> consultarTodos() throws Exception {
+		TipoProductoTrs admTipProTrs = new  TipoProductoTrs();
+		List<Producto> listaProductos = new ArrayList<>();
 		try (Connection con = ConexionBdd.conectarBdd()){
-			String sqlConTipPro = "SELECT * FROM tipo_producto;";
-			try (Statement stConTipPro = con.createStatement();
-				 ResultSet rs = stConTipPro.executeQuery(sqlConTipPro);) {
+			String sqlConPro = "SELECT * FROM producto;";
+			try (Statement stConPro = con.createStatement();
+				 ResultSet rs = stConPro.executeQuery(sqlConPro);) {
 				while (rs.next()) {
-					TipoProducto tipPro = new TipoProducto();
-					tipPro.setIdTipPro(rs.getInt(1));
-					tipPro.setNombreTipPro(rs.getString(2));
-					tipPro.setDescripcionTipPro(rs.getString(3));
-					listaTipoProductos.add(tipPro);
+					Producto pro = new Producto();
+					pro.setIdPro(rs.getInt(1));
+					pro.setNombrePro(rs.getString(2));
+					pro.setDescripcionPro(rs.getString(3));
+					pro.setPrecioPro(rs.getBigDecimal(4));
+					pro.setFechaCadPro(rs.getDate(5));
+					pro.setTipoProducto(admTipProTrs.consultarPorId(rs.getInt(6)));
+					listaProductos.add(pro);
 				}
 			} catch (Exception e) {
 				throw new Exception("Error al cerrar el pt");
@@ -131,26 +145,30 @@ public class ProductoTrs implements ICrudC {
 			throw new Exception("Error al cerrar la conexión");
 		}
 
-		return listaTipoProductos;
+		return listaProductos;
 	}
 
-	public List<TipoProducto> consultarPorNombreDescripcion(String text) throws Exception {
-		List<TipoProducto> listaTipoProductos = new ArrayList<>();
+	public List<Producto> consultarPorNombreDescripcion(String text) throws Exception {
+		TipoProductoTrs admTipProTrs = new  TipoProductoTrs();
+		List<Producto> listaProductos = new ArrayList<>();
 		try(Connection con = ConexionBdd.conectarBdd()) {
-			String sqlConTipPro = "SELECT * FROM ecommerce.tipo_producto where nombre_tip_pro"
-					+ " LIKE ? or descripcion_tip_pro LIKE ?;";
-			try (PreparedStatement stConTipPro = con.prepareStatement(sqlConTipPro);){
-				stConTipPro.setString(1, "%" + text + "%");
-				stConTipPro.setString(2, "%" + text + "%");
+			String sqlConPro = "SELECT * FROM ecommerce.producto where nombre_pro"
+					+ " LIKE ? or descripcion_pro LIKE ?;";
+			try (PreparedStatement stConPro = con.prepareStatement(sqlConPro);){
+				stConPro.setString(1, "%" + text + "%");
+				stConPro.setString(2, "%" + text + "%");
 				try {
-					ResultSet rs = stConTipPro.executeQuery();
+					ResultSet rs = stConPro.executeQuery();
 
 					while (rs.next()) {
-						TipoProducto tipPro = new TipoProducto();
-						tipPro.setIdTipPro(rs.getInt(1));
-						tipPro.setNombreTipPro(rs.getString(2));
-						tipPro.setDescripcionTipPro(rs.getString(3));
-						listaTipoProductos.add(tipPro);
+						Producto pro = new Producto();
+						pro.setIdPro(rs.getInt(1));
+						pro.setNombrePro(rs.getString(2));
+						pro.setDescripcionPro(rs.getString(3));
+						pro.setPrecioPro(rs.getBigDecimal(4));
+						pro.setFechaCadPro(rs.getDate(5));
+						pro.setTipoProducto(admTipProTrs.consultarPorId(rs.getInt(6)));
+						listaProductos.add(pro);
 					}
 				} catch (Exception e) {
 					throw new Exception("Error al cerrar el rs");
@@ -162,6 +180,6 @@ public class ProductoTrs implements ICrudC {
 			throw new Exception("Error al cerrar la conexión");
 		}
 
-		return listaTipoProductos;
+		return listaProductos;
 	}
 }

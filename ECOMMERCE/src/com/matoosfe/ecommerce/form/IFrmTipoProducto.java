@@ -84,7 +84,7 @@ public class IFrmTipoProducto extends JInternalFrame {
 						if (tipProSel == null) {// Guardar
 							// 3. Llamar al controlador
 							mensaje = admTipPro.guardar(tipProducto);
-						}else {
+						} else {
 							// 2.1 Setear el id para actualizar
 							tipProducto.setIdTipPro(tipProSel.getIdTipPro());
 							mensaje = admTipPro.actualizar(tipProducto);
@@ -93,7 +93,7 @@ public class IFrmTipoProducto extends JInternalFrame {
 						// 4. Limpiar el formulario
 						txtNomTipPro.setText("");
 						txaDesTipPro.setText("");
-						//5. Encerar la selección y actualizar la tabla
+						// 5. Encerar la selección y actualizar la tabla
 						tipProSel = null; // Encero la selección
 						inicializar(); // Actualizan el modelo
 						tabTipPro.setModel(myModeloTipPro);// Actualizan el componente gráfico
@@ -147,7 +147,7 @@ public class IFrmTipoProducto extends JInternalFrame {
 					tabbedPane.setSelectedIndex(0);// Cambiar de tab
 					txtNomTipPro.setText(tipProSel.getNombreTipPro());
 					txaDesTipPro.setText(tipProSel.getDescripcionTipPro());
-				}else {
+				} else {
 					JOptionPane.showMessageDialog(null, "No se ha seleccionado ningún registro", "Errores",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -222,7 +222,7 @@ public class IFrmTipoProducto extends JInternalFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					TipoProductoTrs admTipPro = new TipoProductoTrs();
-					
+
 					List<String> columnas = new ArrayList<>();
 					columnas.add("Id");
 					columnas.add("Nombre");
@@ -246,7 +246,7 @@ public class IFrmTipoProducto extends JInternalFrame {
 		JScrollPane spTipPro = new JScrollPane(tabTipPro);
 		tabLisTipPro.add(spTipPro, BorderLayout.CENTER);
 
-		//Implementar la selección de la tabla
+		// Implementar la selección de la tabla
 		tabTipPro.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -280,7 +280,8 @@ public class IFrmTipoProducto extends JInternalFrame {
 
 			myModeloTipPro = new TableModelTipoProducto(columnas, filas);
 		} catch (Exception e) {
-
+			JOptionPane.showMessageDialog(null, "No se pudo inicializar las estructuras de datos", "Errores",
+					JOptionPane.ERROR_MESSAGE);
 		}
 
 	}
