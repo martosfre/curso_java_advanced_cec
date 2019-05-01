@@ -29,16 +29,19 @@ public class ProductoTrs implements ICrudC {
 					"`nombre_pro`,\r\n" + 
 					"`descripcion_pro`,\r\n" + 
 					"`precio_pro`,\r\n" + 
+					"`fecha_cad_pro`,\r\n" + 
 					"`id_tip_pro`)\r\n" + 
 					"VALUES\r\n" + 
-					"(0,?,?,?,?);";
+					"(0,?,?,?,?,?);";
 
 			try (PreparedStatement ptInsPro = con.prepareStatement(sqlInsPro)){
 				Producto pro = (Producto) registro;
 				ptInsPro.setString(1, pro.getNombrePro());
 				ptInsPro.setString(2, pro.getDescripcionPro());
 				ptInsPro.setBigDecimal(3, pro.getPrecioPro());
-				ptInsPro.setInt(4, pro.getTipoProducto().getIdTipPro());
+				//Para guardar una fecha en la bdd se debe convertir de java.util.Date a java.sql.Date
+				ptInsPro.setDate(4, new java.sql.Date(pro.getFechaCadPro().getTime()));
+				ptInsPro.setInt(5, pro.getTipoProducto().getIdTipPro());
 
 				int numFilAfe = ptInsPro.executeUpdate();
 
@@ -46,10 +49,10 @@ public class ProductoTrs implements ICrudC {
 					mensaje = "Registro guardado correctamente";
 				}
 			} catch (Exception e) {
-				throw new Exception("Error al cerrar el pt");
+				throw new Exception("Error al cerrar el pt:" + e.getMessage());
 			}
 		} catch (Exception e) {
-			throw new Exception("Error al cerrar la conexión");
+			throw new Exception("Error al cerrar la conexión" + e.getMessage());
 		}
 		return mensaje;
 	}

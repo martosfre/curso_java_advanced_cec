@@ -30,6 +30,8 @@ import com.matoosfe.ecommerce.modelo.TipoProducto;
 import com.matoosfe.ecommerce.negocio.ProductoTrs;
 import com.matoosfe.ecommerce.negocio.TipoProductoTrs;
 import com.toedter.calendar.JDateChooser;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class IFrmProducto extends JInternalFrame {
 	private JTextField txtNomPro;
@@ -37,13 +39,16 @@ public class IFrmProducto extends JInternalFrame {
 	private JTextArea txaDesPro;
 	private JFormattedTextField fxtPrePro;
 	private JDateChooser datChoFecCadPro;
-	private TipoProducto tipProSel; //Selección Combo
-	private Producto proSel; //Selección Tabla
+	private TipoProducto tipProSel; // Selección Combo
+	private Producto proSel; // Selección Tabla
 
 	/**
 	 * Create the frame.
 	 */
 	public IFrmProducto() {
+		setMaximizable(true);
+		setIconifiable(true);
+		setClosable(true);
 		inicializar();
 		setTitle("::.Administraci\u00F3n Producto.::");
 		setBounds(100, 100, 450, 300);
@@ -52,6 +57,11 @@ public class IFrmProducto extends JInternalFrame {
 		getContentPane().add(toolBar, BorderLayout.NORTH);
 
 		JButton btnNuePro = new JButton("Nuevo");
+		btnNuePro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		});
 		btnNuePro.setIcon(
 				new ImageIcon(IFrmProducto.class.getResource("/com/matoosfe/ecommerce/resources/iconoNuevo32x32.png")));
 		toolBar.add(btnNuePro);
@@ -65,24 +75,29 @@ public class IFrmProducto extends JInternalFrame {
 					producto.setDescripcionPro(txaDesPro.getText());
 					producto.setPrecioPro(new BigDecimal(fxtPrePro.getText()));
 					producto.setFechaCadPro(datChoFecCadPro.getDate());
+					/******************************************************
+					 * Bloque para relacionar el objeto
+					 ********************************************************/
 					producto.setTipoProducto(tipProSel);
-					
+					/********************************************************/
+
 					ProductoTrs admProTrs = new ProductoTrs();
 					String mensaje = null;
 					if (proSel == null) {// Guardar
 						// 3. Llamar al controlador
 						mensaje = admProTrs.guardar(producto);
-					}else {
+					} else {
 						// 2.1 Setear el id para actualizar
 						producto.setIdPro(proSel.getIdPro());
 						mensaje = admProTrs.actualizar(producto);
 					}
-					
+
 					JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
-				}  catch (Exception e1) {
-					JOptionPane.showMessageDialog(null, "Error al guardar", "Errores", JOptionPane.ERROR_MESSAGE);
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Error al guardar:" + e1.getMessage(), "Errores",
+							JOptionPane.ERROR_MESSAGE);
 				}
-				
+
 			}
 		});
 		btnGuaPro.setIcon(new ImageIcon(
@@ -121,7 +136,12 @@ public class IFrmProducto extends JInternalFrame {
 		pnlIngPro.add(lblTipPro, gbc_lblTipPro);
 
 		JComboBox<TipoProducto> cmbTipPro = new JComboBox<>();
-		
+		cmbTipPro.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				tipProSel = (TipoProducto) modeloComboTipPro.getSelectedItem();
+			}
+		});
+
 		cmbTipPro.setModel(modeloComboTipPro);
 		GridBagConstraints gbc_cmbTipPro = new GridBagConstraints();
 		gbc_cmbTipPro.insets = new Insets(0, 0, 5, 0);

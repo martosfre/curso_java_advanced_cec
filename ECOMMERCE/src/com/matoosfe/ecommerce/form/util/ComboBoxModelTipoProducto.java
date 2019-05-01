@@ -51,7 +51,9 @@ public class ComboBoxModelTipoProducto implements ComboBoxModel<TipoProducto>{
 
 	@Override
 	public void setSelectedItem(Object anItem) {
-		tipoProductos.add((TipoProducto) anItem);
+		if(tipoProductos.contains(anItem)) {
+			indice = tipoProductos.indexOf(anItem);
+		}
 	}
 	
 	@Override
