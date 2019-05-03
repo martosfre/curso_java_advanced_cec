@@ -1,31 +1,29 @@
 package com.matoosfe.ecommerce.form;
 
-import java.awt.BorderLayout;
+import java.awt.BorderLayout;	
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JButton;
-import java.awt.Color;
-import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import com.matoosfe.ecommerce.modelo.Usuario;
 import com.matoosfe.ecommerce.negocio.UsuarioTrs;
-
-import javax.swing.UIManager;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.ImageIcon;
 
 public class FrmLogin extends JFrame {
 
@@ -75,8 +73,8 @@ public class FrmLogin extends JFrame {
 		GridBagLayout gbl_panLog = new GridBagLayout();
 		gbl_panLog.columnWidths = new int[] { 96, 46, 103, 0 };
 		gbl_panLog.rowHeights = new int[] { 76, 20, 20, 23, 0 };
-		gbl_panLog.columnWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		gbl_panLog.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panLog.columnWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panLog.rowWeights = new double[] { 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panLog.setLayout(gbl_panLog);
 
 		JLabel lblNomUsu = new JLabel("Usuario:");

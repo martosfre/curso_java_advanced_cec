@@ -69,14 +69,4 @@ public class UsuarioTrs implements ICrudC {
 		return usuDev;
 	}
 	
-	public static void main(String[] args) {
-		try {
-			UsuarioTrs usTr = new UsuarioTrs();
-			Usuario usuDev = usTr.validarUsuario("mtoscano", "1235");
-			System.out.println(usuDev);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 }

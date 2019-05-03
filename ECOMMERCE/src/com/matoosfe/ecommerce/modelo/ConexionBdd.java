@@ -37,15 +37,4 @@ public class ConexionBdd {
 		}
 		return con;
 	}
-	
-	public static void main(String[] args) {
-		try {
-			Connection con = ConexionBdd.conectarBdd();
-			System.out.println(con.getCatalog());
-		} catch (ClassNotFoundException e) {
-			System.err.println(e.getMessage());
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
-	}
 }
